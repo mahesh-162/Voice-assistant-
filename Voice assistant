@@ -1,0 +1,44 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import webbrowser
+# Initialize text-to-speech engine
+engine = pyttsx3.init()
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+def listen():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+        try:
+            command = recognizer.recognize_google(audio)
+            print("You said:", command)
+            return command.lower()
+        except:
+            speak("Sorry, I didn't understand.")
+            return ""
+def respond(command):
+    if "hello" in command:
+        speak("Hello! How can I help you?")
+    elif "time" in command:
+        time = datetime.datetime.now().strftime("%I:%M %p")
+        speak(f"The current time is {time}")
+    elif "date" in command:
+        date = datetime.datetime.now().strftime("%B %d, %Y")
+        speak(f"Today's date is {date}")
+    elif "search" in command:
+        speak("What do you want to search?")
+        query = listen()
+        url = f"https://www.google.com/search?q={query}"
+        webbrowser.open(url)
+        speak("Here is what I found on Google.")
+    elif "exit" in command:
+        speak("Goodbye!")
+        exit()
+    else:
+        speak("Sorry, I can't do that yet.")
+while True:
+    command = listen()
+    respond(command)
